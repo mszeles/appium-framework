@@ -36,8 +36,8 @@ public class ApiDemoTest extends AppiumBaseTest{
 		System.out.println(getDriver().findElementsByAndroidUIAutomator("new UiSelector().clickable(true)").size());
 	}
 
-	@Test
-	public void gestures() {
+	//@Test
+	public void tapAndLongpress() {
 		//Finding element by scrolling it into view first
 		MobileElement element = getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Views\").instance(0))"));
 		element.click();
@@ -53,5 +53,24 @@ public class ApiDemoTest extends AppiumBaseTest{
 		//System.out.println(getDriver().getPageSource());
 		assertTrue(getDriver().findElement(By.id("android:id/title")).isDisplayed());
 	}
+
+	@Test
+	public void swipe() {
+		//Finding element by scrolling it into view first
+		MobileElement element = getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Views\").instance(0))"));
+		element.click();
+		getDriver().findElement(By.xpath("//android.widget.TextView[@text='Date Widgets']")).click();
+		getDriver().findElementByAndroidUIAutomator("text(\"2. Inline\")").click();
+		getDriver().findElement(By.xpath("//*[@content-desc='9']")).click();
+
+		//Swipe: swipe = longpress + move + release
+		TouchAction action = new TouchAction(getDriver());
+		WebElement min15 = getDriver().findElement(By.xpath("//*[@content-desc='15']"));
+		WebElement min45 = getDriver().findElement(By.xpath("//*[@content-desc='45']"));
+		action.longPress(LongPressOptions.longPressOptions().withElement(element(min15)).withDuration(Duration.ofSeconds(2)))
+		.moveTo(element(min45)).release().perform();
+		assertTrue(min45.isSelected());
+	}
+
 
 }
