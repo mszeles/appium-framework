@@ -10,7 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
-import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.LongPressOptions;
@@ -38,11 +37,10 @@ public class ApiDemoTest extends AppiumBaseTest{
 
 	//@Test
 	public void tapAndLongpress() {
-		//Finding element by scrolling it into view first
-		MobileElement element = getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Views\").instance(0))"));
+		MobileElement element = scrollIntoView("text(\"2. Inline\")");
 		element.click();
 		//Tap
-		TouchAction action = new TouchAction(getDriver());
+		TouchAction<?> action = new TouchAction<>(getDriver());
 		WebElement expandableLists = getDriver().findElement(By.xpath("//android.widget.TextView[@content-desc='Expandable Lists']"));
 		action.tap(tapOptions().withElement(element(expandableLists))).perform();
 
@@ -54,17 +52,22 @@ public class ApiDemoTest extends AppiumBaseTest{
 		assertTrue(getDriver().findElement(By.id("android:id/title")).isDisplayed());
 	}
 
-	@Test
-	public void swipe() {
+	//@Test
+	public void scrolling() {
 		//Finding element by scrolling it into view first
-		MobileElement element = getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"Views\").instance(0))"));
-		element.click();
+		scrollIntoView("text(\"Views\")").click();
+		scrollIntoView("text(\"Radio Group\")").click();
+	}
+
+	//@Test
+	public void swipe() {
+		scrollIntoView("text(\"Views\")").click();
 		getDriver().findElement(By.xpath("//android.widget.TextView[@text='Date Widgets']")).click();
 		getDriver().findElementByAndroidUIAutomator("text(\"2. Inline\")").click();
 		getDriver().findElement(By.xpath("//*[@content-desc='9']")).click();
 
 		//Swipe: swipe = longpress + move + release
-		TouchAction action = new TouchAction(getDriver());
+		TouchAction<?> action = new TouchAction<>(getDriver());
 		WebElement min15 = getDriver().findElement(By.xpath("//*[@content-desc='15']"));
 		WebElement min45 = getDriver().findElement(By.xpath("//*[@content-desc='45']"));
 		action.longPress(LongPressOptions.longPressOptions().withElement(element(min15)).withDuration(Duration.ofSeconds(2)))
@@ -72,5 +75,16 @@ public class ApiDemoTest extends AppiumBaseTest{
 		assertTrue(min45.isSelected());
 	}
 
+	@Test
+	public void dragAndDrop() {
+		scrollIntoView("text(\"Views\")").click();
+		getDriver().findElementByAndroidUIAutomator("text(\"Drag and Drop\")").click();
+
+		//Swipe: swipe = longpress + move + release
+		WebElement source = getDriver().findElements(By.className("android.view.View")).get(0);
+		WebElement destination = getDriver().findElements(By.className("android.view.View")).get(2);
+		dragAndDrop(source, destination);
+
+	}
 
 }
