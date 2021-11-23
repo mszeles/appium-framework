@@ -81,6 +81,18 @@ public abstract class AppiumBaseTest {
 		return element;
 	}
 
+	/**
+	 * In case we specify first what is the scrollable component, and doing the scroll afterwards,
+	 * then appium will make sure that the whole item becomes visible in the list.
+	 * @param scrollableParentResourceId
+	 * @param itemSelector
+	 * @return at the moment it is not returning the element which we scrolled, so you should fix this before use
+	 */
+	public MobileElement scrollIntoView(String scrollableParentResourceId, String itemSelector) {
+		return getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().resourceId(\"" + scrollableParentResourceId
+				+ "\")).scrollIntoView(" + itemSelector + ".instance(0))"));
+	}
+
 	public void dragAndDrop(WebElement source, WebElement destination) {
 		TouchAction<?> action = new TouchAction<>(getDriver());
 		action.longPress(LongPressOptions.longPressOptions().withElement(element(source)))
