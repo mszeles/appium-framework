@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +22,11 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.touch.LongPressOptions;
+import io.appium.java_client.touch.TapOptions;
 
 public abstract class AppiumBaseTest {
-	private AndroidDriver<AndroidElement> driver;
-	//private ThreadLocal<AndroidDriver<AndroidElement>> driver;
+	protected AndroidDriver<AndroidElement> driver;
+	//private ThreadLocal<AndroidDriver<AndroidElement>> d;
 
 	public AndroidDriver<AndroidElement> getDriver() {
 		return driver;
@@ -38,7 +40,8 @@ public abstract class AppiumBaseTest {
 
 	private AndroidDriver<AndroidElement> configure() throws FileNotFoundException, IOException {
 		Properties properties = new Properties();
-		properties.load(new FileInputStream(new File(System.getProperty("user.dir") + "/src/test/resources/appium.properties")));
+		String projectHome = System.getProperty("user.dir");
+		properties.load(new FileInputStream(new File(projectHome + "/src/test/resources/appium.properties")));
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setCapability(MobileCapabilityType.DEVICE_NAME, (String)properties.get("device-name"));
 		//This is needed in case the emulator is slow
@@ -48,14 +51,19 @@ public abstract class AppiumBaseTest {
 		cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
 		//For Android you need UI Automator 2
 		cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
+		//https://stackoverflow.com/questions/52023111/no-chromedriver-found-that-can-automate-chrome-53-0-2785
+		String chromeDriver = properties.getProperty("chrome-driver");
+		if (chromeDriver != null && !chromeDriver.isEmpty()) {
+			cap.setCapability("chromedriverExecutable", projectHome + "/" + chromeDriver);
+		}
 		return new AndroidDriver<>(new URL("http://127.0.01:4723/wd/hub"), cap);
 	}
 
 	/* Use this code whenever you learn how to restart application after each test
 	private ThreadLocal<AndroidDriver<AndroidElement>> driver;
 	@BeforeClass
-	public void setupp() throws MalformedURLException {
-		driver = new ThreadLocal<AndroidDriver<AndroidElement>>() {
+	public void setup() throws MalformedURLException {
+		d = new ThreadLocal<AndroidDriver<AndroidElement>>() {
 			@Override
 			protected AndroidDriver<AndroidElement> initialValue() {
 				try {
@@ -67,11 +75,8 @@ public abstract class AppiumBaseTest {
 				}
 			}
 		};
-		getDriver().manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
-	}
-
-	public AndroidDriver<AndroidElement> getDriver() {
-		return driver.get();
+		driver = d.get()
+		driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
 	}
 	 */
 
@@ -97,6 +102,16 @@ public abstract class AppiumBaseTest {
 		TouchAction<?> action = new TouchAction<>(getDriver());
 		action.longPress(LongPressOptions.longPressOptions().withElement(element(source)))
 		.moveTo(element(destination)).release().perform();
+	}
+	
+	public void tap(WebElement element) {
+		TouchAction<?> action = new TouchAction<>(driver);
+		action.tap(TapOptions.tapOptions().withElement(element(element))).perform();
+	}
+	
+	public void longPress(WebElement element, Duration duration) {
+		TouchAction<?> action = new TouchAction<>(driver);
+		action.longPress(LongPressOptions.longPressOptions().withElement(element(element)).withDuration(duration)).release().perform();
 	}
 
 }

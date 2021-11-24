@@ -3,44 +3,49 @@ package com.mszeles.appium.practice;
 import static org.testng.Assert.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
 import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 
 //GeneralStore app is a Hybrid app
 public class GeneralStoreTest extends AppiumBaseTest {
 
 	//@Test
 	public void homePageSuccesfullStart() {
-		getDriver().findElement(By.className("android.widget.Spinner")).click();
+		driver.findElement(By.className("android.widget.Spinner")).click();
 		scrollIntoView("text(\"Canada\")").click();
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/nameField")).sendKeys("Miki");
+		driver.findElement(By.id("com.androidsample.generalstore:id/nameField")).sendKeys("Miki");
 		//The keyboard might appear when entering text, so we  hide it
-		getDriver().hideKeyboard();
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/radioFemale")).click();
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
-		//assertTrue(getDriver().findElement(By.id("com.androidsample.generalstore:id/toolbar_title")).isDisplayed());
+		driver.hideKeyboard();
+		driver.findElement(By.id("com.androidsample.generalstore:id/radioFemale")).click();
+		driver.findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
+		//assertTrue(driver.findElement(By.id("com.androidsample.generalstore:id/toolbar_title")).isDisplayed());
 	}
 
 	//@Test
 	public void homePageToastMessageOnError() {
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
-		AndroidElement toast = getDriver().findElement(By.xpath("//android.widget.Toast"));
+		driver.findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
+		AndroidElement toast = driver.findElement(By.xpath("//android.widget.Toast"));
 		assertEquals(toast.getText(), "Please enter your name");
 		assertEquals(toast.getAttribute("name"), "Please enter your name");
 	}
 
 	@Test
-	public void addToCartAndCheckout() {
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/nameField")).sendKeys("Miki");
+	public void addToCartAndCheckoutAndWebViewHandling() {
+		driver.findElement(By.id("com.androidsample.generalstore:id/nameField")).sendKeys("Miki");
 		//The keyboard might appear when entering text, so we  hide it
-		getDriver().hideKeyboard();
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
+		driver.hideKeyboard();
+		driver.findElement(By.id("com.androidsample.generalstore:id/btnLetsShop")).click();
 		//MobileElement itemName = scrollIntoView("text('Air Jordan 9 Retro')");
 		//itemName.findElement(By.xpath("//parent::android.widget.LinearLayout/android.widget.LinearLayout[3]/android.widget.TextView[1]")).click();
 		//Normal scrolling will only make sure that the element we specifyed will be visible, but this time we would like
@@ -51,24 +56,51 @@ public class GeneralStoreTest extends AppiumBaseTest {
 		String productName2 = "Air Jordan 4 Retro";
 		addToCart(productName);
 		addToCart(productName2);
-		getDriver().findElement(By.id("com.androidsample.generalstore:id/appbar_btn_cart")).click();
-		WebDriverWait wait = new WebDriverWait(getDriver(), 5);
+		driver.findElement(By.id("com.androidsample.generalstore:id/appbar_btn_cart")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 5);
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id("com.androidsample.generalstore:id/productName")));
-		List<AndroidElement> elements = getDriver().findElements(By.id("com.androidsample.generalstore:id/productName"));
+		List<AndroidElement> elements = driver.findElements(By.id("com.androidsample.generalstore:id/productName"));
 		assertEquals(elements.get(0).getText(),
 				productName);
 		assertEquals(elements.get(1).getText(),
 				productName2);
 		BigDecimal sum = new BigDecimal(0);
 		for (int i = 0; i < elements.size(); i++) {
-			String priceStr = getDriver().findElements(By.id("com.androidsample.generalstore:id/productPrice")).get(i).getText();
-			BigDecimal price = new BigDecimal(priceStr.substring(1));
+			BigDecimal price = getPriceOfItem(i);
 			sum = sum.add(price);
 		}
-		String totalPriceStr = getDriver().findElement(By.id("com.androidsample.generalstore:id/totalAmountLbl")).getText();
+		String totalPriceStr = driver.findElement(By.id("com.androidsample.generalstore:id/totalAmountLbl")).getText();
 		BigDecimal totalPrice = new BigDecimal(totalPriceStr.split(" ")[1]);
 		assertEquals(sum, totalPrice);
-
+		AndroidElement checkBox = driver.findElement(By.className("android.widget.CheckBox"));
+		tap(checkBox);
+		AndroidElement termsButton = driver.findElement(By.id("com.androidsample.generalstore:id/termsButton"));
+		longPress(termsButton, Duration.ofSeconds(1));
+		driver.findElement(By.id("android:id/button1")).click();
+		//Navigates to the webview
+		driver.findElement(By.id("com.androidsample.generalstore:id/btnProceed")).click();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		//Switching context
+		Set<String> contextNames = driver.getContextHandles();
+		for (String contextName : contextNames) {
+		    System.out.println(contextName); //prints out something like NATIVE_APP \n WEBVIEW_1
+		}
+		driver.context((String)contextNames.toArray()[1]); // set context to WEBVIEW_1
+		driver.findElement(By.xpath("//*[text()='Olvasson tovább']")).click();
+		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.xpath("//*[text()='Egyetértek']")));
+		driver.findElement(By.xpath("//*[text()='Egyetértek']")).click();
+		driver.findElement(By.cssSelector("[name='q']")).sendKeys("Appium");
+		driver.findElement(By.cssSelector("[name='q']")).sendKeys(Keys.ENTER);
+		
+		//pushing Android back button
+		driver.pressKey(new KeyEvent(AndroidKey.BACK));
+		//Switching back context
+		driver.context("NATIVE_APP");
+		
 
 
 	}
@@ -77,7 +109,13 @@ public class GeneralStoreTest extends AppiumBaseTest {
 		String scrollableParentResourceId = "com.androidsample.generalstore:id/rvProductList";
 		String itemSelector = "text(\"" + productName + "\")";
 		scrollIntoView(scrollableParentResourceId, itemSelector);
-		getDriver().findElement(By.xpath("//*[@text='" + productName + "']/..//*[@text='ADD TO CART']")).click();
+		driver.findElement(By.xpath("//*[@text='" + productName + "']/..//*[@text='ADD TO CART']")).click();
+	}
+	
+	private BigDecimal getPriceOfItem(int index) {
+		String priceStr = driver.findElements(By.id("com.androidsample.generalstore:id/productPrice")).get(index).getText();
+		BigDecimal price = new BigDecimal(priceStr.substring(1));
+		return price;
 	}
 
 }
