@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import io.appium.java_client.MobileBy;
@@ -35,11 +36,18 @@ public abstract class AppiumBaseTest {
 
 	@BeforeMethod
 	public void setupAppiumBaseTest() throws FileNotFoundException, IOException {
-		driver = configure();
+		driver = configure(getAppPath());
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
+	
+	@AfterMethod
+	public void teardown() {
+		driver.quit();
+	}
 
-	private AndroidDriver<AndroidElement> configure() throws FileNotFoundException, IOException {
+	protected abstract String getAppPath();
+
+	private AndroidDriver<AndroidElement> configure(String appPath) throws FileNotFoundException, IOException {
 		properties = new Properties();
 		String projectHome = System.getProperty("user.dir");
 		properties.load(new FileInputStream(new File(projectHome + "/src/test/resources/appium.properties")));
@@ -48,7 +56,6 @@ public abstract class AppiumBaseTest {
 		//This is needed in case the emulator is slow
 		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 15);
 		//https://github.com/appium/appium/blob/master/sample-code/apps/ApiDemos-debug.apk
-		String appPath = properties.getProperty("app-path");
 		if (appPath != null && !appPath.isEmpty()) {
 			File app = new File((String)appPath);
 			cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
@@ -64,7 +71,6 @@ public abstract class AppiumBaseTest {
 		if (browserName != null && !browserName.isEmpty()) {
 			cap.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
 		}
-		
 		return new AndroidDriver<>(new URL("http://127.0.01:4723/wd/hub"), cap);
 	}
 
@@ -90,7 +96,7 @@ public abstract class AppiumBaseTest {
 	 */
 
 	public MobileElement scrollIntoView(String androidUISelector) {
-		MobileElement element = getDriver().findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView("
+		MobileElement element = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView("
 				+ androidUISelector + ")"));
 		return element;
 	}
@@ -121,6 +127,13 @@ public abstract class AppiumBaseTest {
 	public void longPress(WebElement element, Duration duration) {
 		TouchAction<?> action = new TouchAction<>(driver);
 		action.longPress(LongPressOptions.longPressOptions().withElement(element(element)).withDuration(duration)).release().perform();
+	}
+	
+	public void swipe(WebElement from, WebElement to) {
+		//Swipe: swipe = longpress + move + release
+		TouchAction<?> action = new TouchAction<>(getDriver());
+		action.longPress(LongPressOptions.longPressOptions().withElement(element(from)).withDuration(Duration.ofSeconds(2)))
+		.moveTo(element(to)).release().perform();
 	}
 
 }

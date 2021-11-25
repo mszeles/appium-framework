@@ -20,6 +20,11 @@ import io.appium.java_client.android.nativekey.KeyEvent;
 //GeneralStore app is a Hybrid app
 public class GeneralStoreTest extends AppiumBaseTest {
 
+	@Override
+	protected String getAppPath() {
+		return "lib/General-Store.apk";
+	}
+	
 	//@Test
 	public void homePageSuccesfullStart() {
 		driver.findElement(By.className("android.widget.Spinner")).click();

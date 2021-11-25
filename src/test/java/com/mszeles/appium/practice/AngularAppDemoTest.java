@@ -24,4 +24,9 @@ public class AngularAppDemoTest extends AppiumBaseTest {
 		driver.findElement(By.xpath("//li[@class='list-group-item']//a[text()='Devops']")).click();
 	}
 
+	@Override
+	protected String getAppPath() {
+		return null;
+	}
+
 }
