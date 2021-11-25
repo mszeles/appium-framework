@@ -26,6 +26,7 @@ import io.appium.java_client.touch.TapOptions;
 
 public abstract class AppiumBaseTest {
 	protected AndroidDriver<AndroidElement> driver;
+	protected Properties properties;
 	//private ThreadLocal<AndroidDriver<AndroidElement>> d;
 
 	public AndroidDriver<AndroidElement> getDriver() {
@@ -33,22 +34,25 @@ public abstract class AppiumBaseTest {
 	}
 
 	@BeforeMethod
-	public void setup() throws FileNotFoundException, IOException {
+	public void setupAppiumBaseTest() throws FileNotFoundException, IOException {
 		driver = configure();
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 
 	private AndroidDriver<AndroidElement> configure() throws FileNotFoundException, IOException {
-		Properties properties = new Properties();
+		properties = new Properties();
 		String projectHome = System.getProperty("user.dir");
 		properties.load(new FileInputStream(new File(projectHome + "/src/test/resources/appium.properties")));
 		DesiredCapabilities cap = new DesiredCapabilities();
-		cap.setCapability(MobileCapabilityType.DEVICE_NAME, (String)properties.get("device-name"));
+		cap.setCapability(MobileCapabilityType.DEVICE_NAME, properties.getProperty("device-name"));
 		//This is needed in case the emulator is slow
 		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 15);
 		//https://github.com/appium/appium/blob/master/sample-code/apps/ApiDemos-debug.apk
-		File app = new File((String)properties.get("app-path"));
-		cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+		String appPath = properties.getProperty("app-path");
+		if (appPath != null && !appPath.isEmpty()) {
+			File app = new File((String)appPath);
+			cap.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+		}
 		//For Android you need UI Automator 2
 		cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
 		//https://stackoverflow.com/questions/52023111/no-chromedriver-found-that-can-automate-chrome-53-0-2785
@@ -56,6 +60,11 @@ public abstract class AppiumBaseTest {
 		if (chromeDriver != null && !chromeDriver.isEmpty()) {
 			cap.setCapability("chromedriverExecutable", projectHome + "/" + chromeDriver);
 		}
+		String browserName = properties.getProperty("browser-name");
+		if (browserName != null && !browserName.isEmpty()) {
+			cap.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
+		}
+		
 		return new AndroidDriver<>(new URL("http://127.0.01:4723/wd/hub"), cap);
 	}
 
