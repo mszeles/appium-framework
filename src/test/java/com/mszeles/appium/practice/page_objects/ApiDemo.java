@@ -1,18 +1,14 @@
 package com.mszeles.appium.practice.page_objects;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
-public class ApiDemo {
+public class ApiDemo extends AbstractPage {
 	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Preference']")
 	public WebElement preferences;
 	
@@ -74,7 +70,7 @@ public class ApiDemo {
 	public List<WebElement> viewList;
 	
 	public ApiDemo(AndroidDriver<AndroidElement> driver) {
-		PageFactory.initElements(new AppiumFieldDecorator(driver, Duration.ofSeconds(10)), this);
+		super(driver);
 	}
 
 }

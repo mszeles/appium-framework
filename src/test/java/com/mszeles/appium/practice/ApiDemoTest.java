@@ -12,7 +12,7 @@ import com.mszeles.appium.practice.page_objects.ApiDemo;
 
 public class ApiDemoTest extends AppiumBaseTest {
 	
-	private static ApiDemo apiDemo;
+	private ApiDemo apiDemo;
 
 	@BeforeMethod
 	public void createPOF() {
@@ -43,10 +43,10 @@ public class ApiDemoTest extends AppiumBaseTest {
 
 	@Test
 	public void tapAndLongpress() {
-		scrollIntoView(apiDemo.viewsUiAutomator).click();
-		tap(apiDemo.expandableLists);
+		utils.scrollIntoView(apiDemo.viewsUiAutomator).click();
+		utils.tap(apiDemo.expandableLists);
 		apiDemo.customAdapter.click();
-		longPress(apiDemo.peopleNames, Duration.ofSeconds(2));
+		utils.longPress(apiDemo.peopleNames, Duration.ofSeconds(2));
 		//System.out.println(getDriver().getPageSource());
 		assertTrue(apiDemo.title.isDisplayed());
 	}
@@ -54,30 +54,29 @@ public class ApiDemoTest extends AppiumBaseTest {
 	@Test
 	public void scrolling() {
 		//Finding element by scrolling it into view first
-		scrollIntoView(apiDemo.viewsUiAutomator).click();
-		scrollIntoView(apiDemo.radioGroupUiAutomator).click();
+		utils.scrollIntoView(apiDemo.viewsUiAutomator).click();
+		utils.scrollIntoView(apiDemo.radioGroupUiAutomator).click();
 	}
 
 	@Test
 	public void swipe() {
-		scrollIntoView(apiDemo.viewsUiAutomator).click();
+		utils.scrollIntoView(apiDemo.viewsUiAutomator).click();
 		apiDemo.dateWidgets.click();
 		apiDemo.inline.click();
 		apiDemo.nineOClock.click();
 
-		swipe(apiDemo.min15, apiDemo.min45);
+		utils.swipe(apiDemo.min15, apiDemo.min45);
 		assertTrue(apiDemo.min45.isSelected());
 	}
 
 	@Test
 	public void dragAndDrop() {
-		scrollIntoView(apiDemo.viewsUiAutomator).click();
+		utils.scrollIntoView(apiDemo.viewsUiAutomator).click();
 		apiDemo.dragAndDrop.click();
 
 		WebElement source = apiDemo.viewList.get(0);
 		WebElement destination = apiDemo.viewList.get(2);
-		dragAndDrop(source, destination);
-
+		utils.dragAndDrop(source, destination);
 	}
 
 }
