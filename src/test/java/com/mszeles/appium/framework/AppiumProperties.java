@@ -30,26 +30,33 @@ public class AppiumProperties {
 	}
 	
 	public boolean isEmulatorEnabled() {
-		return "true".equalsIgnoreCase(properties.getProperty(EMULATOR_ENABLED));
+		return "true".equalsIgnoreCase(getValue(EMULATOR_ENABLED));
 	}
 	
 	public String getDeviceName() {
-		return properties.getProperty(DEVICE_NAME);
+		return getValue(DEVICE_NAME);
 	}
 	
 	public boolean isHeadless() {
-		return "true".equalsIgnoreCase(properties.getProperty(HEADLESS));
+		return "true".equalsIgnoreCase(getValue(HEADLESS));
 	}
 	
 	public String getChromeDriver() {
-		return properties.getProperty(CHROME_DRIVER);
+		return getValue(CHROME_DRIVER);
 	}
 	
 	public String getBrowserName() {
-		return properties.getProperty(BROWSER_NAME);
+		return getValue(BROWSER_NAME);
 	}
 	
 	public String getUrl() {
-		return properties.getProperty(URL);
+		return getValue(URL);
+	}
+	
+	private String getValue(String property) {
+		String value = System.getProperty(property);
+		String v = (value == null || value.isEmpty()) ? properties.getProperty(property) : value;
+		System.out.println(property + ": " + v);
+		return v;
 	}
 }
