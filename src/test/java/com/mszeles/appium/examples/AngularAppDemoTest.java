@@ -17,7 +17,7 @@ public class AngularAppDemoTest extends AppiumBaseTest {
 	@BeforeMethod
 	public void setupAngularAppDemoTest() {
 		homepage = new AngularAppHomepage(driver);
-		String url = properties.getProperty("url");
+		String url = properties.getUrl();
 		driver.get(url);
 	}
 	

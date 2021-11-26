@@ -2,7 +2,6 @@ package com.mszeles.appium.framework;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +10,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +27,7 @@ import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 public abstract class AppiumBaseTest {
 	protected AndroidDriver<AndroidElement> driver;
-	protected Properties properties;
+	protected AppiumProperties properties;
 	protected AppiumUtils utils;
 	// private ThreadLocal<AndroidDriver<AndroidElement>> d;
 	private AppiumDriverLocalService appiumServer;
@@ -41,14 +39,8 @@ public abstract class AppiumBaseTest {
 
 	@BeforeClass
 	public void globalSetup() throws FileNotFoundException, IOException, InterruptedException {
-		properties = new Properties();
-		try {
-			properties.load(new FileInputStream(Paths
-					.get(System.getProperty("user.dir"), "src", "test", "resources", "appium.properties").toFile()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (isEmulatorEnabled()) {
+		properties = new AppiumProperties();
+		if (properties.isEmulatorEnabled()) {
 			startEmulator();
 		}
 		System.out.println("Starting Appium");
@@ -56,16 +48,12 @@ public abstract class AppiumBaseTest {
 		appiumServer.start();
 	}
 
-	private boolean isEmulatorEnabled() {
-		return "true".equalsIgnoreCase(properties.getProperty("emulator-enabled"));
-	}
-
 	private void startEmulator() throws IOException, InterruptedException {
 		List<String> params = new ArrayList<>();
 		params.add(Paths.get(System.getenv("ANDROID_HOME"), "emulator", "emulator").toString());
 		params.add("-avd");
-		params.add(properties.getProperty("device-name"));
-		if ("true".equalsIgnoreCase(properties.getProperty("headless"))) {
+		params.add(properties.getDeviceName());
+		if (properties.isHeadless()) {
 			params.add("-no-window");
 		}
 		System.out.println("Starting emulator");
@@ -103,7 +91,7 @@ public abstract class AppiumBaseTest {
 	@AfterClass
 	public void globalTeardown() throws IOException {
 		appiumServer.stop();
-		if (isEmulatorEnabled()) {
+		if (properties.isEmulatorEnabled()) {
 			System.out.println("Stopping emulator");
 			//Did not work for me
 			//TODO find a more gentle way to shutdown the emulator
@@ -130,7 +118,7 @@ public abstract class AppiumBaseTest {
 
 	private AndroidDriver<AndroidElement> configure(String appPath) throws FileNotFoundException, IOException {
 		DesiredCapabilities cap = new DesiredCapabilities();
-		cap.setCapability(MobileCapabilityType.DEVICE_NAME, properties.getProperty("device-name"));
+		cap.setCapability(MobileCapabilityType.DEVICE_NAME, properties.getDeviceName());
 		// This is needed in case the emulator is slow
 		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 15);
 		// https://github.com/appium/appium/blob/master/sample-code/apps/ApiDemos-debug.apk
@@ -141,12 +129,12 @@ public abstract class AppiumBaseTest {
 		// For Android you need UI Automator 2
 		cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "uiautomator2");
 		// https://stackoverflow.com/questions/52023111/no-chromedriver-found-that-can-automate-chrome-53-0-2785
-		String chromeDriver = properties.getProperty("chrome-driver");
+		String chromeDriver = properties.getChromeDriver();
 		if (chromeDriver != null && !chromeDriver.isEmpty()) {
 			cap.setCapability("chromedriverExecutable",
 					Paths.get(System.getProperty("user.dir"), chromeDriver).toString());
 		}
-		String browserName = properties.getProperty("browser-name");
+		String browserName = properties.getBrowserName();
 		if (browserName != null && !browserName.isEmpty()) {
 			cap.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
 		}
