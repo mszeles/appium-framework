@@ -1,9 +1,10 @@
-package com.mszeles.appium.practice;
+package com.mszeles.appium.examples;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.mszeles.appium.practice.page_objects.angular_web_app.AngularAppHomepage;
+import com.mszeles.appium.examples.page_objects.angular_web_app.AngularAppHomepage;
+import com.mszeles.appium.framework.AppiumBaseTest;
 
 public class AngularAppDemoTest extends AppiumBaseTest {
 	private AngularAppHomepage homepage;
@@ -22,7 +23,7 @@ public class AngularAppDemoTest extends AppiumBaseTest {
 	
 	@Test
 	public void selectDevops() {
-		homepage.menu.click();
+		//homepage.menu.click();
 		homepage.productsMenuItem.click();
 		utils.scrollInBrowser(0, 1000);
 		homepage.devopsItem.click();

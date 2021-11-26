@@ -1,9 +1,9 @@
-package com.mszeles.appium.practice.page_objects.angular_web_app;
+package com.mszeles.appium.examples.page_objects.angular_web_app;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.mszeles.appium.practice.page_objects.AbstractPage;
+import com.mszeles.appium.framework.page_objects.AbstractPage;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;

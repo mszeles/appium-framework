@@ -1,4 +1,4 @@
-package com.mszeles.appium.practice;
+package com.mszeles.appium.examples;
 
 import static org.testng.Assert.assertTrue;
 
@@ -8,7 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.mszeles.appium.practice.page_objects.api_demo.ApiDemo;
+import com.mszeles.appium.examples.page_objects.api_demo.ApiDemo;
+import com.mszeles.appium.framework.AppiumBaseTest;
 
 public class ApiDemoTest extends AppiumBaseTest {
 	

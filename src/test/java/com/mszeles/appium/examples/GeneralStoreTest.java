@@ -1,4 +1,4 @@
-package com.mszeles.appium.practice;
+package com.mszeles.appium.examples;
 
 import static org.testng.Assert.assertEquals;
 
@@ -10,10 +10,11 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.mszeles.appium.practice.page_objects.general_store.GeneralStoreCartPage;
-import com.mszeles.appium.practice.page_objects.general_store.GeneralStoreHomepage;
-import com.mszeles.appium.practice.page_objects.general_store.GeneralStoreProductsPage;
-import com.mszeles.appium.practice.page_objects.general_store.GoogleHomepage;
+import com.mszeles.appium.examples.page_objects.general_store.GeneralStoreCartPage;
+import com.mszeles.appium.examples.page_objects.general_store.GeneralStoreHomepage;
+import com.mszeles.appium.examples.page_objects.general_store.GeneralStoreProductsPage;
+import com.mszeles.appium.examples.page_objects.general_store.GoogleHomepage;
+import com.mszeles.appium.framework.AppiumBaseTest;
 
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;

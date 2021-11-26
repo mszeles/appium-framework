@@ -1,10 +1,10 @@
-package com.mszeles.appium.practice.page_objects;
+package com.mszeles.appium.framework.page_objects;
 
 import java.time.Duration;
 
 import org.openqa.selenium.support.PageFactory;
 
-import com.mszeles.appium.practice.AppiumUtils;
+import com.mszeles.appium.framework.AppiumUtils;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;

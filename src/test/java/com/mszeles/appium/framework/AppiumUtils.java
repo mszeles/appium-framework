@@ -1,10 +1,15 @@
-package com.mszeles.appium.practice;
+package com.mszeles.appium.framework;
 
 import static io.appium.java_client.touch.offset.ElementOption.element;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.Duration;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.MobileBy;
@@ -72,4 +77,5 @@ public class AppiumUtils {
 	public void scrollInBrowser(int x, int y) {
 		((JavascriptExecutor)driver).executeScript("window.scrollBy(" + x + ", " + y + ")", "");
 	}
+	
 }

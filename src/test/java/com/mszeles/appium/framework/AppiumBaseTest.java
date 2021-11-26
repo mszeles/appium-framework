@@ -1,4 +1,4 @@
-package com.mszeles.appium.practice;
+package com.mszeles.appium.framework;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -130,7 +132,7 @@ public abstract class AppiumBaseTest {
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setCapability(MobileCapabilityType.DEVICE_NAME, properties.getProperty("device-name"));
 		// This is needed in case the emulator is slow
-		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
+		cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 15);
 		// https://github.com/appium/appium/blob/master/sample-code/apps/ApiDemos-debug.apk
 		if (appPath != null && !appPath.isEmpty()) {
 			File app = new File((String) appPath);
@@ -149,6 +151,12 @@ public abstract class AppiumBaseTest {
 			cap.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
 		}
 		return new AndroidDriver<>(new URL("http://127.0.01:4723/wd/hub"), cap);
+	}
+	
+	public void takeScrenshot(String fileName) throws IOException {
+		File file = driver.getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(file, Paths.get(System.getProperty("user.dir"), "target", "screenshoots", fileName).toFile());
+		file.delete();
 	}
 
 	/*
