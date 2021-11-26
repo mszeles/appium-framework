@@ -28,6 +28,11 @@ public class AppiumUtils {
 				+ androidUISelector + ")"));
 		return element;
 	}
+	
+	public MobileElement scrollToText(String text) {
+		MobileElement element = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(text(\"" + text + "\"))"));
+		return element;
+	}
 
 	/**
 	 * In case we specify first what is the scrollable component, and doing the scroll afterwards,

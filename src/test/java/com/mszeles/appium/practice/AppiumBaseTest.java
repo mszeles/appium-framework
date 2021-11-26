@@ -9,25 +9,33 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import io.appium.java_client.remote.MobileCapabilityType;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 
 public abstract class AppiumBaseTest {
 	protected AndroidDriver<AndroidElement> driver;
 	protected Properties properties;
 	protected AppiumUtils utils;
 	//private ThreadLocal<AndroidDriver<AndroidElement>> d;
+	private AppiumDriverLocalService appiumServer;
 
 	public AndroidDriver<AndroidElement> getDriver() {
 		return driver;
 	}
+	
+	static {
+	}
 
 	@BeforeMethod
 	public void setupAppiumBaseTest() throws FileNotFoundException, IOException {
+		startAppiumServer();
 		driver = configure(getAppPath());
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		utils = new AppiumUtils(driver);
@@ -36,6 +44,18 @@ public abstract class AppiumBaseTest {
 	@AfterMethod
 	public void teardown() {
 		driver.quit();
+		stopAppiumServer();
+	}
+	
+	@BeforeClass
+	private void startAppiumServer() {
+		appiumServer = AppiumDriverLocalService.buildDefaultService();
+		appiumServer.start();
+	}
+	
+	@AfterClass
+	private void stopAppiumServer() {
+		appiumServer.stop();
 	}
 
 	protected abstract String getAppPath();
