@@ -3,6 +3,7 @@
 <suite name="AngularAppDemo" parallel="tests">
 	<listeners>
 		<listener class-name="com.mszeles.appium.framework.TestListener" />
+		<listener class-name="com.mszeles.appium.framework.ExtentReporterNG" />
 	</listeners>
 	<test name="Test case 1">
 		<classes>
