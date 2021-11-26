@@ -23,7 +23,7 @@ public class AngularAppDemoTest extends AppiumBaseTest {
 	
 	@Test
 	public void selectDevops() {
-		//homepage.menu.click();
+		homepage.menu.click();
 		homepage.productsMenuItem.click();
 		utils.scrollInBrowser(0, 1000);
 		homepage.devopsItem.click();
