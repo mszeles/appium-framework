@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -57,12 +59,15 @@ public abstract class AppiumBaseTest {
 	}
 
 	private void startEmulator() throws IOException, InterruptedException {
-		String[] params = new String[3];
-		params[0] = Paths.get(System.getenv("ANDROID_HOME"), "emulator", "emulator").toString();
-		params[1] = "-avd";
-		params[2] = properties.getProperty("device-name");
+		List<String> params = new ArrayList<>();
+		params.add(Paths.get(System.getenv("ANDROID_HOME"), "emulator", "emulator").toString());
+		params.add("-avd");
+		params.add(properties.getProperty("device-name"));
+		if ("true".equalsIgnoreCase(properties.getProperty("headless"))) {
+			params.add("-no-window");
+		}
 		System.out.println("Starting emulator");
-		emulatorProcess = Runtime.getRuntime().exec(params);
+		emulatorProcess = Runtime.getRuntime().exec(params.toArray(new String[0]));
 		if (!emulatorProcess.isAlive()) {
 			System.out.println("Error during starting emulator:");
 			printProcessLog(emulatorProcess.getErrorStream());
@@ -102,8 +107,8 @@ public abstract class AppiumBaseTest {
 			//TODO find a more gentle way to shutdown the emulator
 //			Process process = Runtime.getRuntime()
 //					.exec("adb -s " + properties.getProperty("device-name") + " emu kill");
-			emulatorProcess.descendants().forEach(p -> p.destroyForcibly());
-			emulatorProcess.destroyForcibly();
+			emulatorProcess.descendants().forEach(p -> p.destroy());
+			emulatorProcess.destroy();
 		}
 	}
 
