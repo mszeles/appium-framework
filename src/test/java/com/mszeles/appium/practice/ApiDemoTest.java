@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.mszeles.appium.practice.page_objects.ApiDemo;
+import com.mszeles.appium.practice.page_objects.api_demo.ApiDemo;
 
 public class ApiDemoTest extends AppiumBaseTest {
 	

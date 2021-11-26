@@ -1,6 +1,8 @@
-package com.mszeles.appium.practice.page_objects;
+package com.mszeles.appium.practice.page_objects.general_store;
 
 import org.openqa.selenium.WebElement;
+
+import com.mszeles.appium.practice.page_objects.AbstractPage;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;

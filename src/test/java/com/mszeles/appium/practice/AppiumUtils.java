@@ -4,6 +4,7 @@ import static io.appium.java_client.touch.offset.ElementOption.element;
 
 import java.time.Duration;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
 import io.appium.java_client.MobileBy;
@@ -61,5 +62,9 @@ public class AppiumUtils {
 		TouchAction<?> action = new TouchAction<>(driver);
 		action.longPress(LongPressOptions.longPressOptions().withElement(element(from)).withDuration(Duration.ofSeconds(2)))
 		.moveTo(element(to)).release().perform();
+	}
+	
+	public void scrollInBrowser(int x, int y) {
+		((JavascriptExecutor)driver).executeScript("window.scrollBy(" + x + ", " + y + ")", "");
 	}
 }
