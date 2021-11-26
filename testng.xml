@@ -2,12 +2,15 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="AngularAppDemo">
 	<listeners>
-		<listener class-name="com.mszeles.appium.framework.TestListener" />
-		<listener class-name="com.mszeles.appium.framework.ExtentReporterNG" />
+		<listener
+			class-name="com.mszeles.appium.framework.TestListener" />
+		<listener
+			class-name="com.mszeles.appium.framework.ExtentReporterNG" />
 	</listeners>
 	<test name="Test case 1">
 		<classes>
-			<class name="com.mszeles.appium.examples.AngularAppDemoTest" />
+			<!-- <class name="com.mszeles.appium.examples.AngularAppDemoTest" /> -->
+			<class name="com.mszeles.appium.examples.ApiDemoTest" />
 		</classes>
 	</test>
 </suite>

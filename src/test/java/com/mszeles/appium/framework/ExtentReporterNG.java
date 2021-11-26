@@ -72,9 +72,9 @@ public class ExtentReporterNG implements IReporter {
 		}
 	}
 
-	private Date getTime(long millis) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(millis);
-		return calendar.getTime();
-	}
+//	private Date getTime(long millis) {
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTimeInMillis(millis);
+//		return calendar.getTime();
+//	}
 }

@@ -26,13 +26,13 @@ public class ApiDemoTest extends AppiumBaseTest {
 		return "lib/ApiDemos-debug.apk";
 	}
 
-	@Test
-	public void preferencesTest() {
+	@Test(dataProvider = "ApiDemoInputData", dataProviderClass = TestData.class)
+	public void preferencesTest(String input) {
 		apiDemo.preferences.click();
 		apiDemo.preferenceDependencies.click();
 		apiDemo.wifiCheckBox.click();
 		apiDemo.secondOption.click();
-		apiDemo.editBox.sendKeys("Hihi");
+		apiDemo.editBox.sendKeys(input);
 		apiDemo.buttons.get(1).click();
 	}
 
@@ -79,5 +79,5 @@ public class ApiDemoTest extends AppiumBaseTest {
 		WebElement destination = apiDemo.viewList.get(2);
 		utils.dragAndDrop(source, destination);
 	}
-
+	
 }
